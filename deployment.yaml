@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dev-container
+  name: dev-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev-container
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dev-container
+    spec:
+      containers:
+      - name: dev-container
+        image: gsturov/dev-container:10
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"

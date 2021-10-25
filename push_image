@@ -1,0 +1,3 @@
+docker build --tag gsturov/dev-container:$1 .
+docker push gsturov/dev-container:$1
+echo $1 >last_tag

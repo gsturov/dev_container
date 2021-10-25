@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: car-connector-config
+  name: dev-container
+spec:
+  ports:
+  - port: 2222
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app: car-connector-config
+  type: LoadBalancer
