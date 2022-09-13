@@ -1,0 +1,286 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "24"
+    trigger.k8s.io/triggering-configMaps: car
+  creationTimestamp: "2022-08-18T21:57:35Z"
+  generation: 26
+  labels:
+    app.kubernetes.io/instance: car
+    app.kubernetes.io/managed-by: isc-sequence-operator
+    app.kubernetes.io/name: car
+    chart: dataservices
+    chartFinalizer: dataservices
+    cp4s-middleware: allow
+    cp4sgroup: car
+    name: car
+    release: dataservices
+    sequence: car
+  name: car
+  namespace: cp4s
+  resourceVersion: "366920289"
+  uid: add2055b-679d-4527-ba4a-f53ee36eb046
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: car
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        cloudpakId: efa8389f115c42f187eddd8f927926b4
+        cloudpakMetric: RESOURCE_UNIT
+        cloudpakName: IBM Cloud Pak for Security (Gen 3)
+        cloudpakVersion: 1.8.0
+        productChargedContainers: ""
+        productCloudpakRatio: ""
+        productID: 545bf62dce574f99af370899013a4a8a
+        productMetric: MANAGED_VIRTUAL_SERVER
+        productName: Connect Asset and Risk
+        productVersion: 1.8.0
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: car
+        app.kubernetes.io/managed-by: isc-sequence-operator
+        app.kubernetes.io/name: car
+        chart: dataservices
+        chartFinalizer: dataservices
+        cp4s-middleware: allow
+        cp4sgroup: car
+        name: car
+        release: dataservices
+        sequence: car
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - car
+              topologyKey: kubernetes.io/hostname
+            weight: 20
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - car
+              topologyKey: topology.kubernetes.io/zone
+            weight: 10
+      containers:
+      - env:
+        - name: IS_SAAS
+          value: "false"
+        - name: CAR_RSA_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: systemid.private.pem
+              name: car-system-id
+        - name: ENTITLEMENTS_API
+          value: https://isc-entitlements.cp4s.svc:8443/entitlements/v1.0/entitlements
+        - name: REDIS_HOST
+          value: c-default-redis-p.cp4s.svc.cluster.local
+        - name: REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pass
+              name: redis-secret-default
+        - name: REDIS_PORT
+          value: "16000"
+        - name: REDIS_UNAME
+          value: admin
+        - name: CAR_PLATFORM
+          value: OCP
+        - name: REDIS_SSL
+          value: "true"
+        - name: REDIS_SENTINEL
+          value: '{}'
+        - name: REDIS_SENTINEL_NAME
+          value: '{}'
+        - name: OPENSHIFT_ENV
+          value: "true"
+        - name: EXPECTED_EXPORTER_VERSION
+          value: 1.0.9
+        - name: NODE_ENV
+          value: production
+        - name: NODE_EXTRA_CA_CERTS
+          value: /etc/config/ca.crt
+        - name: CAR_DB_NAME
+          value: car
+        - name: PG_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: car-postgres-user
+        - name: PG_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: car-postgres-user
+        - name: PG_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: car-postgres-user
+        - name: PG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: car-postgres-user
+        - name: HASURA_SERVICE_URL
+          value: https://hasura.cp4s.svc:8443
+        - name: HASURA_SERVICE_PORT
+          value: "8443"
+        - name: AUDIT_URL
+          value: https://common-audit-logging.cp4s:9880/icp-audit.http
+        - name: ENABLE_AUDIT
+          value: "false"
+        - name: K8S_NAMESPACE
+          value: cp4s
+        - name: DEPLOY_TIME
+          value: "20220822022003"
+        image: sec-isc-team-isc-icp-docker-local.artifactory.swg-devops.com/isc-car:Dev_4c8f0e05e2a4bd546121c61b065b3f8076ef6690_7020
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /liveness
+            port: 3000
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: car
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readiness
+            port: 3000
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 10
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/config
+          name: secrets
+          readOnly: true
+        - mountPath: /etc/logging
+          name: config-logging-volume
+          readOnly: true
+        - mountPath: /etc/migration
+          name: car-migration
+          readOnly: true
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000770000
+        runAsUser: 1000770000
+        supplementalGroups:
+        - 1000770000
+      serviceAccount: car
+      serviceAccountName: car
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: secrets
+        projected:
+          defaultMode: 420
+          sources:
+          - secret:
+              items:
+              - key: tls.crt
+                path: public.pem
+              - key: tls.key
+                path: private.pem
+              name: car-tls
+          - secret:
+              items:
+              - key: ca.crt
+                path: ca.crt
+              - key: ca.p12
+                path: ca.p12
+              name: cp4s-truststore
+          - secret:
+              items:
+              - key: public
+                path: jwt.public.pem
+              name: isc-jwt
+          - secret:
+              items:
+              - key: systemid.public.pem
+                path: systemid.public.pem
+              - key: systemid.private.pem
+                path: systemid.private.pem
+              name: car-system-id
+      - configMap:
+          defaultMode: 420
+          name: car
+        name: config-logging-volume
+      - configMap:
+          defaultMode: 420
+          name: car-migration
+          optional: false
+        name: car-migration
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2022-08-18T21:57:35Z"
+    lastUpdateTime: "2022-08-30T17:33:16Z"
+    message: ReplicaSet "car-55675d95dc" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2022-09-06T14:49:37Z"
+    lastUpdateTime: "2022-09-06T14:49:37Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 26
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

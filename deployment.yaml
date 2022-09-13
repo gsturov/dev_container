@@ -16,9 +16,10 @@ spec:
       labels:
         app: dev-container
     spec:
+      serviceAccount: car
       containers:
       - name: dev-container
-        image: gsturov/dev-container:10
+        image: sec-isc-team-isc-icp-docker-local.artifactory.swg-devops.com/dev_container-dev:2
         imagePullPolicy: Always
         resources:
           requests:

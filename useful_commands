@@ -1,7 +1,37 @@
+k create -f deployment.yaml
+k create -f service.yaml
 
-kubectl port-forward service/car-connector-config 2222
+k delete -f service.yaml
+k delete -f deployment.yaml
+
+
+
+k port-forward service/dev-container 20873
+
+
+rsync -rvO --size-only --delete --no-perms /home/gleb/dev/isc/car/ rsync://localhost:20873/dev/
 
 
 REQUESTS_CA_BUNDLE=
 pip3 install -r requirements.txt
 REQUESTS_CA_BUNDLE=/etc/config/ca.crt
+
+
+
+kubectl get deployment car -o yaml > car.yaml 
+node --inspect build/app.js
+
+
+
+
+
+
+
+
+
+oc create role allow_chroot2 --verb=use --resource=scc --resource-name=anyuid-chroot -n cp4s
+oc policy add-role-to-user allow_chroot2 -z car -n cp4s
+
+oc adm policy add-scc-to-user anyuid-chroot -z car
+
+oc adm policy add-scc-to-user ibm-privileged-scc -z car
